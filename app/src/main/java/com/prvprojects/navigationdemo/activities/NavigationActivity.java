@@ -19,7 +19,7 @@ public class NavigationActivity extends BaseNavigationActivity {
 
     @Override
     void loadActivityLayout() {
-        setContentView(R.layout.activity_demomap);
+        setContentView(R.layout.activity_navigation);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class NavigationActivity extends BaseNavigationActivity {
         // Get the SupportMapFragment and request notification
         // when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.navigation_actvity_fragment_map);
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
