@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Navigation Demo</string>
     <string name="title_activity_dummy">DummyActivity</string>
+
+    <string name="key_google_maps">AIzaSyD6CozyuqDXKynKfQzUtHfcvanC2irM9Wc</string>
+
 </resources>
