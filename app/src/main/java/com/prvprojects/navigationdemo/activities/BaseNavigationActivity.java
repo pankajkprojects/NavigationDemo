@@ -2,8 +2,11 @@ package com.prvprojects.navigationdemo.activities;
 
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +35,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         Log.d(TAG, getString(R.string.debug_log_logtag_set, TAG));
 
         loadActivityLayout();
+        setupActionbar(getString(R.string.app_name), true);
         loadGoogleMapFragment();
     }
 
@@ -60,5 +64,48 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     * @return Log tag to be used by the base activity
     */
     abstract String getLogTag();
+
+    abstract Toolbar getActivityToolBar();
+
+    abstract TextView getActivityToolbarTitle();
+
+    /**
+     * Sets up action bar for current activity
+     * @param activityTitle
+     * @param showIcon
+     */
+    protected void setupActionbar(@NonNull String activityTitle, boolean showIcon){
+
+        try {
+            Toolbar toolbar = getActivityToolBar();
+            if(toolbar==null) {
+                String message = "Please set the id of Toolbar.";
+                Log.e(TAG, message);
+                throw new IllegalStateException(message);
+            }
+
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            toolbar.setContentInsetsAbsolute(0,0);
+            if(showIcon) {
+                getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+                Log.d(TAG, "launcher icon set in toolbar");
+            }
+            else {
+                //activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                //activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+            }
+            TextView toolbar_title = getActivityToolbarTitle();
+
+            if(activityTitle!=null && activityTitle.length()>0 && toolbar_title!=null) {
+                toolbar_title.setText(activityTitle);
+                Log.d(TAG, "app title set in toolbar");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w(TAG, "Error in setting up the action bar");
+        }
+
+    }
 
 }

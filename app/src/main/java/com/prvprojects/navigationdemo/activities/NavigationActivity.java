@@ -2,6 +2,8 @@ package com.prvprojects.navigationdemo.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,4 +43,13 @@ public class NavigationActivity extends BaseNavigationActivity {
         return TAG;
     }
 
+    @Override
+    Toolbar getActivityToolBar() {
+        return (Toolbar) findViewById(R.id.navigation_activity_toolbar);
+    }
+
+    @Override
+    TextView getActivityToolbarTitle() {
+        return (TextView) findViewById(R.id.navigation_activity_toolbar_tv_title);
+    }
 }

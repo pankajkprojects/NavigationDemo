@@ -39,7 +39,8 @@
         <activity
             android:name=".DemoMapActivity"/>
 
-        <activity android:name=".activities.NavigationActivity" />
+        <activity android:name=".activities.NavigationActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
 
