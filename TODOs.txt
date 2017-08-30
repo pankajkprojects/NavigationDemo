@@ -1,0 +1,15 @@
+TODOs File
+
+At a given time, this file contains the current work, proposed future work and past work done
+
+
+Current - Add logo for App
+
+TODOs:
+
+1. Setup maps activity - Get API keys etc.
+2. Setup base activity to reduce coding in maps activity
+3. Setup Preferences Activity
+4. Setup basic UI for 6 inch phone. [Tablets to be added later if required]
+5. Add Places API support in search boxes.
+6. Add Google Routes etc.
