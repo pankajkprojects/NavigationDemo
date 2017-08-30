@@ -2,7 +2,7 @@ TODOs File
 
 At a given time, this file contains the current work, proposed future work and past work done
 
-Current -
+Current - Setup project in Google APIs Console - DONE
 
 DONE:
 1. Add logo for App - Added a dummy activity to install app and check app launcher icon.
