@@ -2,12 +2,14 @@ TODOs File
 
 At a given time, this file contains the current work, proposed future work and past work done
 
-Current - Demo Google Map Activity created
+ONGOING - Complete Navigation Activity user input view
 
 DONE:
-1. Add logo for App - Added a dummy activity to install app and check app launcher icon.
-2. Setup project in Google APIs Console.
+1. Add logo for App - Added a dummy activity to install app and check app launcher icon
+2. Setup project in Google APIs Console
 3. Add Splash Screen
+4. Demo Google Map Activity created
+5. NavigationActivity is using BaseNaviationActivity - Working
 
 
 TODOs:

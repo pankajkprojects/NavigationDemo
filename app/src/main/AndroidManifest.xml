@@ -39,6 +39,8 @@
         <activity
             android:name=".DemoMapActivity"/>
 
+        <activity android:name=".activities.NavigationActivity" />
+
     </application>
 
 </manifest>

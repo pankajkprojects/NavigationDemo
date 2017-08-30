@@ -4,4 +4,12 @@
 
     <string name="key_google_maps">AIzaSyBBQqC28-W7qfFcXbTZOIapIQ96HinDiwU</string>
 
+    <string name="error_log_logtag_not_set">Please set log tag.</string>
+    <string name="error_log_googlemap_null">Google Map object is null.</string>
+    <string name="debug_log_logtag_set">Log tag set %s</string>
+    <string name="debug_log_googlemap_initialized">Google Map object is initialized.</string>
+
+    <string name="label_src">SOURCE</string>
+    <string name="label_dest">DESTINATION</string>
+
 </resources>

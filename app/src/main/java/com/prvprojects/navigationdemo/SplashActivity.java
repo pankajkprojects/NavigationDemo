@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.prvprojects.navigationdemo.utils.Constants;
 
+import com.prvprojects.navigationdemo.activities.NavigationActivity;
+
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "SplashActivity";
@@ -22,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent intent = new Intent(SplashActivity.this, DemoMapActivity.class);
+                Intent intent = new Intent(SplashActivity.this, NavigationActivity.class);
                 startActivity(intent);
                 finish();
 

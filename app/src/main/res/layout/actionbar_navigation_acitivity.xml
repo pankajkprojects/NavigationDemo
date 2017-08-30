@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/navigation_activity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_collapseMode="pin"
+        app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+        <TextView
+            android:id="@+id/navigation_activity_toolbar_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:layout_gravity="center_horizontal"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/navigation_activity_cv_src_dest_input"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/SourceDestinationInputCardView">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/label_src"
+                android:id="@+id/navigation_activity_tv_label_src"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"/>
+
+            <EditText
+                android:id="@+id/navigation_activity_et_userinput_src"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:gravity="center"
+                android:layout_toRightOf="@id/navigation_activity_tv_label_src"
+                android:layout_alignTop="@id/navigation_activity_tv_label_src"
+                android:layout_alignBottom="@id/navigation_activity_tv_label_src"/>
+
+            <TextView
+                android:text="@string/label_dest"
+                android:id="@+id/navigation_activity_tv_label_dest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"/>
+
+            <EditText
+                android:id="@+id/navigation_activity_et_userinput_dest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:gravity="left|center_vertical"
+                android:layout_toLeftOf="@id/navigation_activity_tv_label_dest"
+                android:layout_alignTop="@id/navigation_activity_tv_label_dest"
+                android:layout_alignBottom="@id/navigation_activity_tv_label_dest"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</android.support.design.widget.AppBarLayout>
