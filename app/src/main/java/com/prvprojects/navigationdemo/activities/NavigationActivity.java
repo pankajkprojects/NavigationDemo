@@ -13,6 +13,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.prvprojects.navigationdemo.R;
+import com.prvprojects.navigationdemo.datatypes.NavigationData;
 
 /**
  * This is the core UI screen providing user with Navigation handling
@@ -67,11 +68,25 @@ public class NavigationActivity extends BaseNavigationActivity {
         else
             Log.d(TAG, "Source selected is null.");
 
+        NavigationData currNavData = getmNavigationData();
+        if(currNavData!=null) {
+            currNavData.setDestinationPlace(sourceSelected);
+        }
+
+        if(currNavData.isReadyForNavigation()) {
+
+        }
+
     }
 
 
     @Override
     void handleLocationSelectedByUser_Destination(Place destinationSelected) {
+
+        NavigationData currNavData = getmNavigationData();
+        if(currNavData!=null) {
+            currNavData.setDestinationPlace(destinationSelected);
+        }
 
         if(destinationSelected!=null)
             Log.d(TAG, "Destination selected: "+destinationSelected.getName());
@@ -83,10 +98,19 @@ public class NavigationActivity extends BaseNavigationActivity {
     @Override
     void setupUiViews() {
 
+        NavigationData currNavData = getmNavigationData();
+
         etSource = (EditText) findViewById(R.id.navigation_activity_et_userinput_src);
         etDestination = (EditText) findViewById(R.id.navigation_activity_et_userinput_dest);
 
-        etSource.setText("ABC");
+        if(currNavData!=null) {
+
+            if(currNavData.hasUserSelected_Source())
+                etSource.setText(currNavData.getSourcePlaceAsString());
+            else
+                etDestination.setText(currNavData.getDestinationPlaceAsString());
+
+        }
 
         etSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

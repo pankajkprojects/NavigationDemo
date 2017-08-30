@@ -18,7 +18,9 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.prvprojects.navigationdemo.R;
+import com.prvprojects.navigationdemo.datatypes.NavigationData;
 
 /**
  * Base class used to segregate some basic code used in Navigation Activity
@@ -27,8 +29,14 @@ import com.prvprojects.navigationdemo.R;
 
 public abstract class BaseNavigationActivity extends AppCompatActivity {
 
+    // Represents the Tag used in Log statements
     private static String TAG = null;
+
+    // Represents the current Google Map object loaded on screen
     private GoogleMap googleMap = null;
+
+    // Represents the current navigation related data in activity
+    private NavigationData mNavigationData;
 
     // Request codes used by this base class so that child class can be relieved of keeping a track
     // of activity result handling
@@ -49,6 +57,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
         loadActivityLayout();
         setupActionbar(getString(R.string.app_name), true);
+        initializeNavigationData();
         loadGoogleMapFragment();
     }
 
@@ -220,10 +229,27 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
     abstract void setupUiViews();
 
+    private void initializeNavigationData(){
+        mNavigationData = new NavigationData();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         setupUiViews();
+    }
+
+    protected NavigationData getmNavigationData(){
+        return mNavigationData;
+    }
+
+    /**
+     * Makes an HTTP request to fetch routes from Google API using
+     * @param source
+     * @param destination
+     */
+    protected void fetchRoutesFromGoogle(LatLng source, LatLng destination){
+
     }
 
 }
