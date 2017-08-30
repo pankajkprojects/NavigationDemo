@@ -3,8 +3,12 @@ package com.prvprojects.navigationdemo.activities;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,6 +22,8 @@ import com.prvprojects.navigationdemo.R;
 public class NavigationActivity extends BaseNavigationActivity {
 
     private static final String TAG = "NavigationActivity";
+    private EditText etSource;
+    private EditText etDestination;
 
     @Override
     void loadActivityLayout() {
@@ -52,4 +58,72 @@ public class NavigationActivity extends BaseNavigationActivity {
     TextView getActivityToolbarTitle() {
         return (TextView) findViewById(R.id.navigation_activity_toolbar_tv_title);
     }
+
+    @Override
+    void handleLocationSelectedByUser_Source(Place sourceSelected) {
+
+        if(sourceSelected!=null)
+            Log.d(TAG, "Source selected: "+sourceSelected.getName());
+        else
+            Log.d(TAG, "Source selected is null.");
+
+    }
+
+
+    @Override
+    void handleLocationSelectedByUser_Destination(Place destinationSelected) {
+
+        if(destinationSelected!=null)
+            Log.d(TAG, "Destination selected: "+destinationSelected.getName());
+        else
+            Log.d(TAG, "Destination selected is null.");
+
+    }
+
+    @Override
+    void setupUiViews() {
+
+        etSource = (EditText) findViewById(R.id.navigation_activity_et_userinput_src);
+        etDestination = (EditText) findViewById(R.id.navigation_activity_et_userinput_dest);
+
+        etSource.setText("ABC");
+
+        etSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+
+                if(hasFocus)
+                    requestLocationUserInput_Source();
+
+            }
+        });
+        etSource.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                // Clear the current location, if the navigation is not in start mode
+                return false;
+            }
+        });
+
+        etDestination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+
+                if(hasFocus)
+                    requestLocationUserInput_Destination();
+
+            }
+        });
+        etDestination.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                // Clear the current location, if the navigation is not in start mode
+                return false;
+            }
+        });
+
+    }
+
 }

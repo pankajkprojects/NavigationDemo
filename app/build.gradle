@@ -28,6 +28,7 @@ ext {
     androidSupportVersion = '26.0.1'
     constraintLayoutVersion = '1.0.2'
     junitVersion = '4.12'
+    playServicesVersion = '11.2.0'
 }
 
 dependencies {
@@ -38,7 +39,8 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
     compile "com.android.support:design:$androidSupportVersion"
 
-    implementation 'com.google.android.gms:play-services-maps:11.2.0'
+    implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
 
     testImplementation "junit:junit:$junitVersion"
 
