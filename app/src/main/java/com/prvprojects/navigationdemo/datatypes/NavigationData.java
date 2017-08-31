@@ -105,7 +105,7 @@ public final class NavigationData {
      * @return true is user has selected a source position
      */
     public boolean hasUserSelected_Source(){
-        return sourcePlace!=null && sourcePlace.getLatLng()!=null;
+        return sourcePlace!=null;
     }
 
     /**
@@ -113,7 +113,7 @@ public final class NavigationData {
      * @return true is user has selected a destination position
      */
     public boolean hasUserSelected_Destination(){
-        return destinationPlace!=null && destinationPlace.getLatLng()!=null;
+        return destinationPlace!=null;
     }
 
     /**
@@ -121,8 +121,7 @@ public final class NavigationData {
      * @return true if bot source and destination places have been selected
      */
     public boolean isReadyForNavigation(){
-        return sourcePlace!=null && sourcePlace.getLatLng()!=null
-                    && destinationPlace!=null && destinationPlace.getLatLng()!=null;
+        return sourcePlace!=null && destinationPlace!=null;
     }
 
 }

@@ -1,19 +1,27 @@
 package com.prvprojects.navigationdemo.activities;
 
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.support.v7.widget.SearchView;
+import android.annotation.SuppressLint;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.prvprojects.navigationdemo.R;
 import com.prvprojects.navigationdemo.datatypes.NavigationData;
 
@@ -25,12 +33,27 @@ import com.prvprojects.navigationdemo.datatypes.NavigationData;
 public class NavigationActivity extends BaseNavigationActivity {
 
     private static final String TAG = "NavigationActivity";
-    private EditText etSource;
-    private EditText etDestination;
+
+    private TextView tvSelectedSource;
+    private TextView tvSelectedDestnation;
+    private TextView tvBottomSheetContent;
+
+    private Button btnSelectedSource;
+    private Button btnSelectedDestination;
+
+    private ImageView ivResetMapZoomLevel;
+
+    private View bottomSheetRootView;
+    private BottomSheetBehavior bottomSheetBehavior;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
+
 
     @Override
     void loadActivityLayout() {
         setContentView(R.layout.activity_navigation);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     @Override
@@ -42,20 +65,11 @@ public class NavigationActivity extends BaseNavigationActivity {
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                try {
-                    // Customise the styling of the base map using a JSON object defined
-                    // in a raw resource file.
-                    boolean success = googleMap.setMapStyle(
-                            MapStyleOptions.loadRawResourceStyle(
-                                    NavigationActivity.this, R.raw.google_map_style));
 
-                    if (!success) {
-                        Log.e(TAG, "Style parsing failed.");
-                    }
-                } catch (Resources.NotFoundException e) {
-                    Log.e(TAG, "Can't find style. Error: ", e);
+                if(isLocationPermissionGranted()) {
+                    setGoogleMap(googleMap);
+                    onLocationPermissionGranted();
                 }
-                setGoogleMap(googleMap);
             }
         });
     }
@@ -87,6 +101,8 @@ public class NavigationActivity extends BaseNavigationActivity {
         if(currNavData!=null)
             currNavData.setSourcePlace(sourceSelected);
 
+        setupUiViews();
+
         if(currNavData.isReadyForNavigation())
             fetchRoutesFromGoogle(currNavData.getSourcePlaceAsLatLng(),
                     currNavData.getDestinationPlaceAsLatLng());
@@ -106,6 +122,8 @@ public class NavigationActivity extends BaseNavigationActivity {
         if(currNavData!=null)
             currNavData.setDestinationPlace(destinationSelected);
 
+        setupUiViews();
+
         if(currNavData.isReadyForNavigation())
             fetchRoutesFromGoogle(currNavData.getSourcePlaceAsLatLng(),
                     currNavData.getDestinationPlaceAsLatLng());
@@ -117,54 +135,161 @@ public class NavigationActivity extends BaseNavigationActivity {
 
         NavigationData currNavData = getmNavigationData();
 
-        etSource = (EditText) findViewById(R.id.navigation_activity_et_userinput_src);
-        etDestination = (EditText) findViewById(R.id.navigation_activity_et_userinput_dest);
+        tvSelectedSource = findViewById(R.id.navigation_activity_tv_selectedSource);
+        tvSelectedDestnation = findViewById(R.id.navigation_activity_tv_selectedDestination);
+        tvBottomSheetContent = findViewById(R.id.navigation_activity_tv_bottomSheetContent);
+
+        btnSelectedSource = findViewById(R.id.navigation_activity_btn_selectSource);
+        btnSelectedDestination = findViewById(R.id.navigation_activity_btn_selectDestination);
+
+        ivResetMapZoomLevel = findViewById(R.id.navigation_activity_iv_resetCamera);
+
+        bottomSheetRootView = findViewById(R.id.navigation_activity_ll_bottomsheet_rootView);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetRootView);
+
+        ivResetMapZoomLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                NavigationData navData = getmNavigationData();
+
+                if(navData!=null && getGoogleMap()!=null) {
+
+                    resetMapCamera();
+
+                }
+
+            }
+        });
+
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+
+                    NavigationData navData = getmNavigationData();
+
+                    if(navData==null
+                            || !navData.hasUserSelected_Source()
+                            || !navData.hasUserSelected_Destination())
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
 
         if(currNavData!=null) {
 
-            if(currNavData.hasUserSelected_Source())
-                etSource.setText(currNavData.getSourcePlaceAsString());
+            Log.d(TAG, "Nav object is not null");
+            Log.d(TAG, "currNavData.hasUserSelected_Source(): "+currNavData.hasUserSelected_Source());
+
+            if(currNavData.hasUserSelected_Source()) {
+                tvSelectedSource.setText(currNavData.getSourcePlaceAsString());
+                Log.d(TAG, "tvSelectedSource.setText(currNavData.getSourcePlaceAsString()): "+currNavData.getSourcePlaceAsString());
+            }
+            else
+                tvSelectedSource.setText(R.string.select_source);
+
             if(currNavData.hasUserSelected_Destination())
-                etDestination.setText(currNavData.getDestinationPlaceAsString());
+                tvSelectedDestnation.setText(currNavData.getDestinationPlaceAsString());
+            else
+                tvSelectedDestnation.setText(R.string.select_destination);
 
-        }
 
-        etSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            if(currNavData.hasUserSelected_Source()
+                    && currNavData.hasUserSelected_Destination()) {
+                btnSelectedSource.setEnabled(false);
+                btnSelectedDestination.setEnabled(false);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            } else {
+                btnSelectedSource.setEnabled(true);
+                btnSelectedDestination.setEnabled(true);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+        } else {
+
+            Log.d(TAG, "Nav object is null");
+            btnSelectedSource.setEnabled(true);
+            btnSelectedDestination.setEnabled(true);
+            tvSelectedSource.setText(R.string.select_source);
+            tvSelectedDestnation.setText(R.string.select_destination);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+         }
+
+        btnSelectedSource.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-
-                if(hasFocus)
-                    requestLocationUserInput_Source();
-
+            public void onClick(View view) {
+                requestLocationUserInput_Source();
             }
         });
-        etSource.setOnLongClickListener(new View.OnLongClickListener() {
+
+        btnSelectedSource.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-
-                // Clear the current location, if the navigation is not in start mode
-                return false;
+                getmNavigationData().setSourcePlace(null);
+                setupUiViews();
+                return true;
             }
         });
 
-        etDestination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        btnSelectedDestination.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-
-                if(hasFocus)
-                    requestLocationUserInput_Destination();
-
+            public void onClick(View view) {
+                requestLocationUserInput_Destination();
             }
         });
-        etDestination.setOnLongClickListener(new View.OnLongClickListener() {
+
+        btnSelectedDestination.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-
-                // Clear the current location, if the navigation is not in start mode
-                return false;
+                getmNavigationData().setDestinationPlace(null);
+                setupUiViews();
+                return true;
             }
         });
 
     }
 
+    @Override
+    protected void displayRouteDirections(String htmlEncodedDirections) {
+
+        tvBottomSheetContent.setText(Html.fromHtml(htmlEncodedDirections));
+
+    }
+
+    /**
+     * This method is called after checking permission grant only
+     */
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onLocationPermissionGranted() {
+        if(getGoogleMap()!=null) {
+            getGoogleMap().setMyLocationEnabled(true);
+            getGoogleMap().getUiSettings().setZoomControlsEnabled(true);
+            getGoogleMap().getUiSettings().setCompassEnabled(true);
+            getGoogleMap().getUiSettings().setMyLocationButtonEnabled(true);
+
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Handle last known location
+                            if (location != null) {
+                                CameraUpdate cu = CameraUpdateFactory.newLatLng(
+                                        new LatLng(location.getLatitude(),
+                                        location.getLongitude())
+                                );
+                                getGoogleMap().animateCamera(cu);
+                            }
+                        }
+                    });
+        }
+    }
 }

@@ -13,4 +13,10 @@
     <string name="label_src">SOURCE</string>
     <string name="label_dest">DESTINATION</string>
 
+    <string name="hint_tap_to_select_source">Tap to select source</string>
+    <string name="hint_tap_to_select_destination">Tap to select destination</string>
+
+    <string name="select_source">Please select Source</string>
+    <string name="select_destination">Please select Destination</string>
+
 </resources>

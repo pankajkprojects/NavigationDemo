@@ -1,20 +1,31 @@
 package com.prvprojects.navigationdemo.activities;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
@@ -76,12 +87,16 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     // Represents currently displayed directions api response.
     private DirectionsApiResponse mDirectionsApiResponse;
 
+    // Used to keep track of map bounds we have to show to user after a Directions API Query
+    private LatLngBounds mapBounds;
+
     ApiInterface apiService;
 
     // Request codes used by this base class so that child class can be relieved of keeping a track
     // of activity result handling
     private static final int REQUEST_CODE_PLACES_API_FOR_SOURCE = 800;
     private static final int REQUEST_CODE_PLACES_API_FOR_DESTINATION = 820;
+    private static final int REQUEST_CODE_REQUEST_PERMISSION_FINE_LOCATION = 830;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,21 +111,22 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         Log.d(TAG, getString(R.string.debug_log_logtag_set, TAG));
 
         loadActivityLayout();
-        setupActionbar(getString(R.string.app_name), true);
+        setupActionbar(getString(R.string.app_name), false);
         initializeNavigationData();
         loadGoogleMapFragment();
 
-        // Code to print routes and set up UI using string data without making Google API Calls
-        // To reduce API quota usage during development
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mDirectionsApiResponse = getDirectionsAPIResponse();
-                handleDirectionsApiResponse(mDirectionsApiResponse);
 
-            }
-        }, 3000);
+//        // Code to print routes and set up UI using string data without making Google API Calls
+//        // To reduce API quota usage during development
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mDirectionsApiResponse = getDirectionsAPIResponse();
+//                handleDirectionsApiResponse(mDirectionsApiResponse);
+//
+//            }
+//        }, 3000);
 
     }
 
@@ -190,6 +206,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
      * @param requestCode
      */
     private void requestPlacesApiChooser(int requestCode) {
+
         try {
             // The autocomplete activity requires Google Play Services to be available. The intent
             // builder checks this and throws an exception if it is not the case.
@@ -286,160 +303,27 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
     private void initializeNavigationData(){
         mNavigationData = new NavigationData();
-        mNavigationData.setSourcePlace(new Place() {
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public List<Integer> getPlaceTypes() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getAddress() {
-                return null;
-            }
-
-            @Override
-            public Locale getLocale() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getName() {
-                return "Kachiguda, Hyderabad, Telangana 501301, India";
-            }
-
-            @Override
-            public LatLng getLatLng() {
-                return new LatLng(17.3849048, 78.48665539999999);
-            }
-
-            @Override
-            public LatLngBounds getViewport() {
-                return null;
-            }
-
-            @Override
-            public Uri getWebsiteUri() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getPhoneNumber() {
-                return null;
-            }
-
-            @Override
-            public float getRating() {
-                return 0;
-            }
-
-            @Override
-            public int getPriceLevel() {
-                return 0;
-            }
-
-            @Override
-            public CharSequence getAttributions() {
-                return null;
-            }
-
-            @Override
-            public Place freeze() {
-                return null;
-            }
-
-            @Override
-            public boolean isDataValid() {
-                return false;
-            }
-        });
-        mNavigationData.setDestinationPlace(new Place() {
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public List<Integer> getPlaceTypes() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getAddress() {
-                return null;
-            }
-
-            @Override
-            public Locale getLocale() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getName() {
-                return "Ashok Nagar, Bengaluru, Karnataka 560001, India";
-            }
-
-            @Override
-            public LatLng getLatLng() {
-                return new LatLng(12.9716014, 77.5945493);
-            }
-
-            @Override
-            public LatLngBounds getViewport() {
-                return null;
-            }
-
-            @Override
-            public Uri getWebsiteUri() {
-                return null;
-            }
-
-            @Override
-            public CharSequence getPhoneNumber() {
-                return null;
-            }
-
-            @Override
-            public float getRating() {
-                return 0;
-            }
-
-            @Override
-            public int getPriceLevel() {
-                return 0;
-            }
-
-            @Override
-            public CharSequence getAttributions() {
-                return null;
-            }
-
-            @Override
-            public Place freeze() {
-                return null;
-            }
-
-            @Override
-            public boolean isDataValid() {
-                return false;
-            }
-        });
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // To check play services are available in device or not
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+
+        if (resultCode == ConnectionResult.SUCCESS){
+            ;// Nothing required
+        }else{
+            Toast.makeText(BaseNavigationActivity.this, "Play Services are not available, app may crash.", Toast.LENGTH_SHORT).show();
+        }
         setupUiViews();
     }
 
     protected NavigationData getmNavigationData(){
         return mNavigationData;
     }
+
+    protected abstract void displayRouteDirections(String htmlEncodedDirections);
 
     /**
      * Makes an HTTP request to fetch routes from Google API using
@@ -463,6 +347,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<DirectionsApiResponse> call, Response<DirectionsApiResponse> response) {
                 String status = response.body().getStatus();
+                handleDirectionsApiResponse(response.body());
                 Log.d(TAG, "Status Received: "+status);
                 Log.w("JSON Response => ",new GsonBuilder().setPrettyPrinting().create().toJson(response));
             }
@@ -1830,15 +1715,43 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
             return;
         }
 
+        //<editor-fold desc="Adding the source and destination markers to map as chosen by user">
+        LatLng startLocationChosen = new LatLng(mNavigationData.getSourcePlaceAsLatLng().latitude, mNavigationData.getSourcePlaceAsLatLng().longitude);
+        String startAddressChosen = mNavigationData.getSourcePlaceAsString();
+        if(startAddressChosen==null || startAddressChosen.length()<0)
+            startAddressChosen = getString(R.string.label_src);
+
+        LatLng endLocationChosen = new LatLng(mNavigationData.getDestinationPlaceAsLatLng().latitude, mNavigationData.getDestinationPlaceAsLatLng().longitude);
+        String endAddressChosen = mNavigationData.getDestinationPlaceAsString();
+        if(endAddressChosen==null || endAddressChosen.length()<0)
+            endAddressChosen = getString(R.string.label_dest);
+
         IconGenerator iconFactory = new IconGenerator(this);
+
+        addTextMarker(iconFactory, startAddressChosen, startLocationChosen,
+                NavigationMapUtils.getUniqueBackgroundColorForSourceMarker(BaseNavigationActivity.this),
+                NavigationMapUtils.getUniqueTextStyleForSourceMarker());
+
+        addTextMarker(iconFactory, endAddressChosen, endLocationChosen,
+                NavigationMapUtils.getUniqueBackgroundColorForDestinationMarker(BaseNavigationActivity.this),
+                NavigationMapUtils.getUniqueTextStyleForDestinationMarker());
+        //</editor-fold>
+
 
         int numRoutes = routes.length;
         Toast.makeText(BaseNavigationActivity.this, "Number of routes found: " + numRoutes, Toast.LENGTH_SHORT).show();
 
         int routeNumber = 1;
+
+        // We will load all the directions for each route and legs
+        StringBuilder routesDirections = new StringBuilder();
+
         for(DirectionsRoute route : routes) {
 
             Log.d(TAG, "Started printing route "+routeNumber+" on map.");
+
+            routesDirections.append("Route: "+routeNumber+" - "+route.getSummary());
+            routesDirections.append("<br/>Legal info: "+route.getCopyrights());
 
             DirectionsPolyline routeOverViewPolyLine = route.getOverviewPolyline();
             if(routeOverViewPolyLine!=null && routeOverViewPolyLine.getPoints()!=null) {
@@ -1854,10 +1767,14 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
             DirectionsRouteLeg[] routeLegs = route.getRouteLegs();
 
+            routesDirections.append("<br/>");
+            // We will add one leg only
+
             if(routeLegs!=null && routeLegs.length>0) {
 
                 Log.d(TAG, "Printing legs for current route.");
 
+                boolean oneLegAdded = false;
                 for(DirectionsRouteLeg currLeg : routeLegs) {
 
                     int legDistance = currLeg.getLegDistance().getValue();
@@ -1893,6 +1810,7 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
                     if(steps!=null && steps.length>0) {
 
+                        int stepNumber = 1;
                         for(DirectionsRouteSteps currStep : steps) {
 
                             int numSteps = steps.length;
@@ -1939,11 +1857,27 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
                             }
 
+                            if(!oneLegAdded) {
 
+                                String maneuver = "";
+                                if(stepNumber==1)
+                                    maneuver = "Lets Start";
+                                else if(stepNumber==numSteps)
+                                    maneuver = "Reached!!!";
+                                else
+                                    maneuver = currStep.getManeuver();
+
+                                routesDirections.append("<br/><br/><b>" + stepNumber + "--> " + maneuver);
+                                routesDirections.append("<br/>"+currStep.getHtmlInstructions());
+                            }
+
+                            stepNumber++;
 
                         }
 
                     }
+
+                    oneLegAdded = true;
 
                 }
 
@@ -1957,19 +1891,34 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
             if(bounds.getSouthWest()!=null)
                 builder.include(bounds.getSouthWestLatLng());
 
-            LatLngBounds mapBounds = builder.build();
+            mapBounds = builder.build();
 
-            int padding = 20; // offset from edges of the map in pixels
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(mapBounds, padding);
-            getGoogleMap().animateCamera(cu);
+            resetMapCamera();
 
             Log.d(TAG, "Repositioned Google Map to show routes as given by bounds in Directions API response");
 
             Log.d(TAG, "Completed printing route "+routeNumber+" on map.");
+
+            routesDirections.append("<br/><br/>****** Route "+routeNumber+" completed *******");
+
             routeNumber++;
+
 
         }
 
+        displayRouteDirections(routesDirections.toString());
+
+    }
+
+    /**
+     * Adjust zoom level to show recent Directions API query received latitude longitude bounds area on Map
+     */
+    protected void resetMapCamera() {
+        if(mapBounds!=null) {
+            int padding = 60; // offset from edges of the map in pixels
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(mapBounds, padding);
+            getGoogleMap().animateCamera(cu);
+        }
     }
 
     /**
@@ -1984,16 +1933,131 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         Log.d(TAG, "Adding marker for "+text+" at "+position.latitude+", "+position.longitude);
 
 
+        String markerLabel = String.valueOf(text.charAt(0));
+        if(text.length()>=2)
+            markerLabel += String.valueOf(text.charAt(1));
+
         iconFactory.setColor(backgroundColor);
         iconFactory.setTextAppearance(textAppearance);
         MarkerOptions markerOptions = new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(String.valueOf(text.charAt(0)))))
+                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(markerLabel)))
                 .position(position)
-                .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+                .anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV())
+                .snippet(text.toString());
 
-        getGoogleMap().addMarker(markerOptions);
+
+        Marker temp = getGoogleMap().addMarker(markerOptions);
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_navigation_demo_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_NewDirections:
+                loadNewDirections();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    /**
+     * Clears the map and resets UI so user can create new directions
+     */
+    protected void loadNewDirections(){
+
+        initializeNavigationData();
+        getGoogleMap().clear();
+        setupUiViews();
+
+    }
+    protected abstract void onLocationPermissionGranted();
+
+    /**
+     * Makes a request for permission grant if permission has not been granted earlier.
+     * @return true if location permission is granted - fine location
+     * false if not granted
+     */
+    protected boolean isLocationPermissionGranted() {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission. ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission. ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission for location")
+                        .setMessage("To display your current location along with directions API, please allow location permission.")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(BaseNavigationActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        REQUEST_CODE_REQUEST_PERMISSION_FINE_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // First time, no explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission. ACCESS_FINE_LOCATION},
+                        REQUEST_CODE_REQUEST_PERMISSION_FINE_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_REQUEST_PERMISSION_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission. ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        onLocationPermissionGranted();
+
+
+                    }
+
+                } else {
+
+                    Log.d(TAG, "Permission denied for location.");
+
+                }
+                return;
+            }
+
+        }
+    }
 
 }

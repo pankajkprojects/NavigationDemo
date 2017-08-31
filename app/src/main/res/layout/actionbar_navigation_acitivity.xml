@@ -25,63 +25,64 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/navigation_activity_cv_src_dest_input"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/SourceDestinationInputCardView">
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/navigation_activity_cv_src_dest_input"-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:visibility="gone"-->
+        <!--style="@style/SourceDestinationInputCardView">-->
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
 
-            <TextView
-                android:text="@string/label_src"
-                android:id="@+id/navigation_activity_tv_label_src"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:gravity="center"
-                android:layout_alignParentTop="true"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:layout_alignParentLeft="true"/>
+            <!--<TextView-->
+                <!--android:text="@string/label_src"-->
+                <!--android:id="@+id/navigation_activity_tv_label_src1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:minHeight="?attr/actionBarSize"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_marginBottom="@dimen/margin_medium"-->
+                <!--android:layout_alignParentLeft="true"/>-->
 
-            <EditText
-                android:id="@+id/navigation_activity_et_userinput_src"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:gravity="left|center_vertical"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:layout_toRightOf="@id/navigation_activity_tv_label_src"
-                android:layout_alignTop="@id/navigation_activity_tv_label_src"
-                android:layout_alignBottom="@id/navigation_activity_tv_label_src"/>
+            <!--<EditText-->
+                <!--android:id="@+id/navigation_activity_et_userinput_src"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:minHeight="?attr/actionBarSize"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:layout_marginBottom="@dimen/margin_medium"-->
+                <!--android:layout_toRightOf="@id/navigation_activity_tv_label_src1"-->
+                <!--android:layout_alignTop="@id/navigation_activity_tv_label_src1"-->
+                <!--android:layout_alignBottom="@id/navigation_activity_tv_label_src1"/>-->
 
-            <TextView
-                android:text="@string/label_dest"
-                android:id="@+id/navigation_activity_tv_label_dest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:gravity="center"
-                android:layout_below="@id/navigation_activity_et_userinput_src"
-                android:layout_alignParentRight="true"/>
+            <!--<TextView-->
+                <!--android:text="@string/label_dest"-->
+                <!--android:id="@+id/navigation_activity_tv_label_dest1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:minHeight="?attr/actionBarSize"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_below="@id/navigation_activity_et_userinput_src"-->
+                <!--android:layout_alignParentRight="true"/>-->
 
-            <EditText
-                android:id="@+id/navigation_activity_et_userinput_dest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:gravity="left|center_vertical"
-                android:layout_below="@id/navigation_activity_et_userinput_src"
-                android:layout_toLeftOf="@id/navigation_activity_tv_label_dest"
-                android:layout_alignTop="@id/navigation_activity_tv_label_dest"
-                android:layout_alignBottom="@id/navigation_activity_tv_label_dest"/>
+            <!--<EditText-->
+                <!--android:id="@+id/navigation_activity_et_userinput_dest"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:minHeight="?attr/actionBarSize"-->
+                <!--android:gravity="left|center_vertical"-->
+                <!--android:layout_below="@id/navigation_activity_et_userinput_src"-->
+                <!--android:layout_toLeftOf="@id/navigation_activity_tv_label_dest1"-->
+                <!--android:layout_alignTop="@id/navigation_activity_tv_label_dest1"-->
+                <!--android:layout_alignBottom="@id/navigation_activity_tv_label_dest1"/>-->
 
-        </RelativeLayout>
+        <!--</RelativeLayout>-->
 
-    </android.support.v7.widget.CardView>
+    <!--</android.support.v7.widget.CardView>-->
 
 </android.support.design.widget.AppBarLayout>

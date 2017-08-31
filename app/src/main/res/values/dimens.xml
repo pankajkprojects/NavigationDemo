@@ -11,5 +11,6 @@
     <dimen name="margin_xxlarge">48dp</dimen>
     <dimen name="margin_xxxlarge">64dp</dimen>
 
+    <dimen name="height_bottomSheetPeek">120dp</dimen>
 
 </resources>

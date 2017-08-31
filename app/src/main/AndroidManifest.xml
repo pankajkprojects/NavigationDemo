@@ -6,6 +6,10 @@
     <!-- Removed for now. To be added after considering Maps and GCM conflicts/consequences etc. -->
     <!--android:allowBackup="true"-->
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -32,14 +36,8 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".DummyActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity
-            android:name=".DemoMapActivity"/>
-
         <activity android:name=".activities.NavigationActivity"
+            android:configChanges="orientation"
             android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
