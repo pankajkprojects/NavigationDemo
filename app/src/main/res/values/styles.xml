@@ -34,5 +34,13 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
+    <style name="Marker_Source" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="Marker_Destination" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+from
 
 </resources>

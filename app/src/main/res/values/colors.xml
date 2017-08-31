@@ -7,6 +7,23 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTeal10">#B2DFDB</color>
 
+    <color name="colorPurple500">#9C27B0</color>
+    <color name="colorDeepPurple">#673AB7</color>
+    <color name="colorIndigo500">#3F51B5</color>
+    <color name="colorBlue500">#2196F3</color>
+    <color name="colorLightBlue500">#03A9F4</color>
+    <color name="colorCyan500">#00BCD4</color>
+    <color name="colorTeal500">#009688</color>
+    <color name="colorGreen500">#4CAF50</color>
+    <color name="colorLightGreen500">#8BC34A</color>
+    <color name="colorLime500">#CDDC39</color>
+    <color name="colorAmber500">#FFC107</color>
+    <color name="colorDeepOrange500">#FF5722</color>
+    <color name="colorBrown500">#795548</color>
+
+    <color name="colorBlue800">#1565C0</color>
+    <color name="colorCyan800">#00838F</color>
+
     <color name="ic_launcher_background">#E8F9E1</color>
 
 </resources>
