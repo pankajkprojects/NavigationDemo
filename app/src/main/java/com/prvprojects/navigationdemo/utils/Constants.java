@@ -7,6 +7,6 @@ package com.prvprojects.navigationdemo.utils;
 
 public final class Constants {
 
-    public static final int TIME_OUT_SPLASH = 3000; // 3 seconds
+    public static final int TIME_OUT_SPLASH = 1000; // 1 second
 
 }

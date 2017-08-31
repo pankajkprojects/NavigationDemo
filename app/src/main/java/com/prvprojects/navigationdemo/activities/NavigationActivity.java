@@ -109,7 +109,6 @@ public class NavigationActivity extends BaseNavigationActivity {
 
     }
 
-
     @Override
     void handleLocationSelectedByUser_Destination(Place destinationSelected) {
 

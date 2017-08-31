@@ -130,27 +130,6 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Method to check if the essential objects have been initialized or not
-     * Just a check.
-     */
-    private void checkEssentials(){
-        if(this.googleMap==null) {
-            Log.e(TAG, getString(R.string.error_log_googlemap_null));
-            throw new RuntimeException(getString(R.string.error_log_googlemap_null));
-        }
-        Log.e(TAG, getString(R.string.debug_log_googlemap_initialized));
-    }
-
-    abstract void loadActivityLayout();
-
-    abstract void loadGoogleMapFragment();
-
-    protected GoogleMap getGoogleMap(){return this.googleMap;}
-
-    protected void setGoogleMap(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-    }
 
     /**
     * Ths activity extenting this activity shall implement this method
@@ -158,9 +137,79 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     */
     abstract String getLogTag();
 
+    /**
+     * Used by this base activity to get activity toolbar oebject reference from child activity
+     * @return
+     */
     abstract Toolbar getActivityToolBar();
 
+    /**
+     * Used by this base activity to get activity title from child activity
+     * @return
+     */
     abstract TextView getActivityToolbarTitle();
+
+    /**
+     * A centralized method to abstract away internal code of handling activity results
+     * from Navigation Activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // Get the user's selected place from the Intent.
+            Place placeSelected = PlaceAutocomplete.getPlace(this, data);
+            Log.i(TAG, "Place Selected: " + placeSelected.getName());
+
+            switch (requestCode) {
+
+                case REQUEST_CODE_PLACES_API_FOR_SOURCE:
+                    handleLocationSelectedByUser_Source(placeSelected);
+                    break;
+
+                case REQUEST_CODE_PLACES_API_FOR_DESTINATION:
+                    handleLocationSelectedByUser_Destination(placeSelected);
+                    break;
+                default:
+                    Log.d(TAG, "Invalid request code:"+requestCode);
+                    break;
+
+            }
+
+        } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+            Status status = PlaceAutocomplete.getStatus(this, data);
+            Log.e(TAG, "Error: Status = " + status.toString());
+        } else if (resultCode == RESULT_CANCELED) {
+            Log.d(TAG, "User closed activity before making a selection.");
+        }
+
+    }
+
+    /**
+     * Handle activity result for place selected as source by user
+     * @param sourceSelected
+     */
+    abstract void handleLocationSelectedByUser_Source(Place sourceSelected);
+
+    /**
+     * Handle activity result for place selected as destination by user
+     * @param destinationSelected
+     */
+    abstract void handleLocationSelectedByUser_Destination(Place destinationSelected);
+
+    /**
+     * Set up UI views
+     */
+    abstract void setupUiViews();
+
+    /**
+     * Perform action on receiving grant of location permission
+     */
+    abstract void onLocationPermissionGranted();
 
     /**
      * Sets up action bar for current activity
@@ -248,58 +297,26 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     }
 
     /**
-     * A centralized method to abstract away internal code of handling activity results
-     * from Navigation Activity
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * Method to check if the essential objects have been initialized or not
+     * Just a check.
      */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            // Get the user's selected place from the Intent.
-            Place placeSelected = PlaceAutocomplete.getPlace(this, data);
-            Log.i(TAG, "Place Selected: " + placeSelected.getName());
-
-            switch (requestCode) {
-
-                case REQUEST_CODE_PLACES_API_FOR_SOURCE:
-                    handleLocationSelectedByUser_Source(placeSelected);
-                    break;
-
-                case REQUEST_CODE_PLACES_API_FOR_DESTINATION:
-                    handleLocationSelectedByUser_Destination(placeSelected);
-                    break;
-                default:
-                    Log.d(TAG, "Invalid request code:"+requestCode);
-                    break;
-
-            }
-
-        } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-            Status status = PlaceAutocomplete.getStatus(this, data);
-            Log.e(TAG, "Error: Status = " + status.toString());
-        } else if (resultCode == RESULT_CANCELED) {
-            Log.d(TAG, "User closed activity before making a selection.");
+    private void checkEssentials(){
+        if(this.googleMap==null) {
+            Log.e(TAG, getString(R.string.error_log_googlemap_null));
+            throw new RuntimeException(getString(R.string.error_log_googlemap_null));
         }
-
+        Log.e(TAG, getString(R.string.debug_log_googlemap_initialized));
     }
 
-    /**
-     * Handle activity result for place selected as source by user
-     * @param sourceSelected
-     */
-    abstract void handleLocationSelectedByUser_Source(Place sourceSelected);
+    abstract void loadActivityLayout();
 
-    /**
-     * Handle activity result for place selected as destination by user
-     * @param destinationSelected
-     */
-    abstract void handleLocationSelectedByUser_Destination(Place destinationSelected);
+    abstract void loadGoogleMapFragment();
 
-    abstract void setupUiViews();
+    protected GoogleMap getGoogleMap(){return this.googleMap;}
+
+    protected void setGoogleMap(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+    }
 
     private void initializeNavigationData(){
         mNavigationData = new NavigationData();
@@ -347,6 +364,14 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<DirectionsApiResponse> call, Response<DirectionsApiResponse> response) {
                 String status = response.body().getStatus();
+
+                if(status==null || !status.equals("OK"))
+                    Toast.makeText(BaseNavigationActivity.this,
+                            "Server response status received: "+status, Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(BaseNavigationActivity.this,
+                            "Please wait preparing Map and loading routes for you. Thank You.", Toast.LENGTH_SHORT).show();
+
                 handleDirectionsApiResponse(response.body());
                 Log.d(TAG, "Status Received: "+status);
                 Log.w("JSON Response => ",new GsonBuilder().setPrettyPrinting().create().toJson(response));
@@ -1779,32 +1804,6 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
                     int legDistance = currLeg.getLegDistance().getValue();
 
-                    LatLng startLocation = new LatLng(currLeg.getStartLocation().getLat(),
-                            currLeg.getStartLocation().getLng());
-                    String startAddress = currLeg.getStartAddress();
-                    if(startAddress==null || startAddress.length()<0)
-                        startAddress = getString(R.string.label_src);
-
-                    LatLng endLocation = new LatLng(currLeg.getEndLocation().getLat(),
-                            currLeg.getEndLocation().getLng());
-                    String endAddress = currLeg.getEndAddress();
-                    if(endAddress==null || endAddress.length()<0)
-                        endAddress = getString(R.string.label_dest);
-
-                    if(startLocation==null || endLocation==null) {
-                        Log.d(TAG, "Invalid start location and end location in current leg.");
-                        continue;
-                    }
-
-                    addTextMarker(iconFactory, startAddress, startLocation,
-                            NavigationMapUtils.getUniqueBackgroundColorForSourceMarker(BaseNavigationActivity.this),
-                            NavigationMapUtils.getUniqueTextStyleForSourceMarker());
-
-                    addTextMarker(iconFactory, endAddress, endLocation,
-                            NavigationMapUtils.getUniqueBackgroundColorForDestinationMarker(BaseNavigationActivity.this),
-                            NavigationMapUtils.getUniqueTextStyleForDestinationMarker());
-
-
                     // We will draw arrows on each step start location
                     DirectionsRouteSteps[] steps = currLeg.getRouteSteps();
 
@@ -1819,11 +1818,6 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
                             LatLng endLocationStep = new LatLng(currStep.getEnd_location().getLat(),
                                     currStep.getEnd_location().getLng());
-
-                            if(startLocation==null || endLocation==null) {
-                                Log.d(TAG, "Invalid start location and end location in current step.");
-                                continue;
-                            }
 
                             // Find the direction of route from source to destination
                             float distance = (float) SphericalUtil.computeDistanceBetween(startLocationStep,
@@ -1983,7 +1977,6 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         setupUiViews();
 
     }
-    protected abstract void onLocationPermissionGranted();
 
     /**
      * Makes a request for permission grant if permission has not been granted earlier.
