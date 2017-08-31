@@ -31,6 +31,7 @@ ext {
     playServicesVersion = '11.2.0'
     googleMapsApJavaClientVersion = '0.2.2'
     gsonVersion = '2.7'
+    retrofitVersion = '2.3.0'
 }
 
 dependencies {
@@ -48,5 +49,8 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
 }

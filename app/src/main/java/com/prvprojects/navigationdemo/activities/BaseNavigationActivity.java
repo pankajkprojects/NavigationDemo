@@ -21,6 +21,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.prvprojects.navigationdemo.R;
 import com.prvprojects.navigationdemo.datatypes.NavigationData;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsApiResponse;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsLatLng;
+import com.prvprojects.navigationdemo.retrofit.ApiClient;
+import com.prvprojects.navigationdemo.retrofit.ApiInterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Base class used to segregate some basic code used in Navigation Activity
@@ -252,6 +260,28 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
         Log.d(TAG, "User has selected Source and Destination Locations. " +
                 "Please fetch routes from Google APO");
+
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<DirectionsApiResponse> call = apiService.getDirections(new DirectionsLatLng(source), new DirectionsLatLng(destination), getString(R.string.key_google_maps));
+        call.enqueue(new Callback<DirectionsApiResponse>() {
+
+
+            @Override
+            public void onResponse(Call<DirectionsApiResponse> call, Response<DirectionsApiResponse> response) {
+                String status = response.body().getStatus();
+                Log.d(TAG, "Status Received: "+status);
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsApiResponse> call, Throwable t) {
+                Log.d(TAG, "Error received on Directions API response.");
+                t.printStackTrace();
+            }
+
+
+        });
 
     }
 
