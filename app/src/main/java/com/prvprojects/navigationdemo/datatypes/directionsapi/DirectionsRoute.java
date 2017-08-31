@@ -29,4 +29,59 @@ public class DirectionsRoute {
     @SerializedName("waypoint_order")
     DirectionsWayPointOrder wayPointOrder[];
 
+    public DirectionsBounds getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(DirectionsBounds bounds) {
+        this.bounds = bounds;
+    }
+
+    public String getCopyrights() {
+        return copyrights;
+    }
+
+    public void setCopyrights(String copyrights) {
+        this.copyrights = copyrights;
+    }
+
+    public DirectionsRouteLeg[] getRouteLegs() {
+        return routeLegs;
+    }
+
+    public void setRouteLegs(DirectionsRouteLeg[] routeLegs) {
+        this.routeLegs = routeLegs;
+    }
+
+    public DirectionsPolyline getOverviewPolyline() {
+        return overviewPolyline;
+    }
+
+    public void setOverviewPolyline(DirectionsPolyline overviewPolyline) {
+        this.overviewPolyline = overviewPolyline;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public DirectionsWarnings[] getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(DirectionsWarnings[] warnings) {
+        this.warnings = warnings;
+    }
+
+    public DirectionsWayPointOrder[] getWayPointOrder() {
+        return wayPointOrder;
+    }
+
+    public void setWayPointOrder(DirectionsWayPointOrder[] wayPointOrder) {
+        this.wayPointOrder = wayPointOrder;
+    }
 }

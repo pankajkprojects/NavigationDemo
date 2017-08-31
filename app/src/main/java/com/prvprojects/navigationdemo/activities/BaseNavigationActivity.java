@@ -20,15 +20,23 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.ui.IconGenerator;
 import com.prvprojects.navigationdemo.R;
 import com.prvprojects.navigationdemo.datatypes.NavigationData;
 import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsApiResponse;
 import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsLatLng;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsPolyline;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsRoute;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsRouteLeg;
 import com.prvprojects.navigationdemo.retrofit.ApiClient;
 import com.prvprojects.navigationdemo.retrofit.ApiInterface;
 
@@ -39,6 +47,8 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.graphics.drawable.GradientDrawable.LINE;
 
 /**
  * Base class used to segregate some basic code used in Navigation Activity
@@ -82,16 +92,19 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         setupActionbar(getString(R.string.app_name), true);
         initializeNavigationData();
         loadGoogleMapFragment();
+
+        // Code to print routes and set up UI using string data without making Google API Calls
+        // To reduce API quota usage during development
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                fetchRoutesFromGoogle(mNavigationData.getSourcePlaceAsLatLng(),
-//                        mNavigationData.getDestinationPlaceAsLatLng());
                 mDirectionsApiResponse = getDirectionsAPIResponse();
+                handleDirectionsApiResponse(mDirectionsApiResponse);
 
             }
         }, 3000);
+
     }
 
     /**
@@ -109,6 +122,8 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
     abstract void loadActivityLayout();
 
     abstract void loadGoogleMapFragment();
+
+    protected GoogleMap getGoogleMap(){return this.googleMap;}
 
     protected void setGoogleMap(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -456,6 +471,10 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Dummy method to parse API Response from a string
+     * @return
+     */
     protected DirectionsApiResponse getDirectionsAPIResponse(){
 
         //<editor-fold desc="Api Response">
@@ -1276,5 +1295,74 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
         return directionsApiResponse;
 
     }
+
+    /**
+     * Handle the Directions API Response and print markets, routes, etc on Map
+     * @param directionsApiResponse
+     */
+    protected void handleDirectionsApiResponse(DirectionsApiResponse directionsApiResponse){
+
+        if(directionsApiResponse != null)
+            mDirectionsApiResponse = directionsApiResponse;
+
+        GoogleMap currMap = getGoogleMap();
+
+        if(currMap==null) {
+            Log.d(TAG, "Google Map is null. Cannot handle Directions API Response");
+            return;
+        }
+
+        // We will do the following steps for each route Google Provides
+        // 1. Add source marker with label S
+        // 2. Add destination marker with label D
+
+        DirectionsRoute routes[] = mDirectionsApiResponse.getRoutes();
+
+        if(routes==null || routes.length<1) {
+            String logMessage = "No routes exist between "
+                    +mNavigationData.getSourcePlaceAsString()
+                    +" and "
+                    +mNavigationData.getDestinationPlaceAsString();
+            Log.d(TAG, logMessage);
+            Toast.makeText(BaseNavigationActivity.this, logMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int numRoutes = routes.length;
+        Toast.makeText(BaseNavigationActivity.this, "Number of routes found: " + numRoutes, Toast.LENGTH_SHORT).show();
+
+        for(DirectionsRoute route : routes) {
+
+            Log.d(TAG, "Started printing a route on map.");
+
+            DirectionsPolyline routeOverViewPolyLine = route.getOverviewPolyline();
+            if(routeOverViewPolyLine!=null && routeOverViewPolyLine.getPoints()!=null) {
+
+                List<LatLng> decodedPath = PolyUtil.decode(routeOverViewPolyLine.getPoints());
+                currMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+
+            }
+
+            Log.d(TAG, "Completed printing a route on map.");
+
+        }
+
+    }
+
+    /**
+     * Adds a marker, does not keep any object reference in activity.
+     * @param iconFactory
+     * @param text
+     * @param position
+     */
+    private void addTextMarker(IconGenerator iconFactory, CharSequence text, LatLng position) {
+        MarkerOptions markerOptions = new MarkerOptions().
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
+                position(position).
+                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+
+        getGoogleMap().addMarker(markerOptions);
+    }
+
 
 }
