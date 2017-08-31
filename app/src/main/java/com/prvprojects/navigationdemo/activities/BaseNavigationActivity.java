@@ -25,12 +25,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.maps.android.PolyUtil;
+import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.ui.IconGenerator;
 import com.prvprojects.navigationdemo.R;
 import com.prvprojects.navigationdemo.datatypes.NavigationData;
@@ -40,6 +42,7 @@ import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsLatLng;
 import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsPolyline;
 import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsRoute;
 import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsRouteLeg;
+import com.prvprojects.navigationdemo.datatypes.directionsapi.DirectionsRouteSteps;
 import com.prvprojects.navigationdemo.retrofit.ApiClient;
 import com.prvprojects.navigationdemo.retrofit.ApiInterface;
 import com.prvprojects.navigationdemo.utils.NavigationMapUtils;
@@ -1857,6 +1860,8 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
 
                 for(DirectionsRouteLeg currLeg : routeLegs) {
 
+                    int legDistance = currLeg.getLegDistance().getValue();
+
                     LatLng startLocation = new LatLng(currLeg.getStartLocation().getLat(),
                             currLeg.getStartLocation().getLng());
                     String startAddress = currLeg.getStartAddress();
@@ -1881,6 +1886,64 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
                     addTextMarker(iconFactory, endAddress, endLocation,
                             NavigationMapUtils.getUniqueBackgroundColorForDestinationMarker(BaseNavigationActivity.this),
                             NavigationMapUtils.getUniqueTextStyleForDestinationMarker());
+
+
+                    // We will draw arrows on each step start location
+                    DirectionsRouteSteps[] steps = currLeg.getRouteSteps();
+
+                    if(steps!=null && steps.length>0) {
+
+                        for(DirectionsRouteSteps currStep : steps) {
+
+                            int numSteps = steps.length;
+                            LatLng startLocationStep = new LatLng(currStep.getStart_location().getLat(),
+                                    currStep.getStart_location().getLng());
+
+                            LatLng endLocationStep = new LatLng(currStep.getEnd_location().getLat(),
+                                    currStep.getEnd_location().getLng());
+
+                            if(startLocation==null || endLocation==null) {
+                                Log.d(TAG, "Invalid start location and end location in current step.");
+                                continue;
+                            }
+
+                            // Find the direction of route from source to destination
+                            float distance = (float) SphericalUtil.computeDistanceBetween(startLocationStep,
+                                    endLocationStep);
+
+                            // Draw arrown only if distance between start and end step locations
+                            // is more than equated distance of steps to avoida congestion of markers
+                            if(distance>=legDistance/numSteps) {
+                                float rotation = (float) SphericalUtil.computeHeading(startLocationStep,
+                                        endLocationStep);
+                                LatLng arrowzMarkerPosition = SphericalUtil.computeOffset(startLocationStep,
+                                        50, rotation - 90);
+
+
+                                Log.d(TAG, "Rotation: "+rotation+" between "+startLocationStep
+                                        +" and "+endLocationStep);
+
+                                Marker arrowMarker = getGoogleMap().addMarker(
+                                        new MarkerOptions()
+                                                .position(arrowzMarkerPosition)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow_large))
+                                                .anchor(0.5f,0.5f)
+                                                .flat(true)
+                                );
+
+                                arrowMarker.setRotation(rotation-90);
+
+                            } else {
+
+                                Log.d(TAG, "Navigation arrow not displayed to reduce congestion of markers.");
+
+                            }
+
+
+
+                        }
+
+                    }
 
                 }
 

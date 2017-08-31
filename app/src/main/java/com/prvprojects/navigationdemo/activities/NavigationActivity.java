@@ -1,5 +1,6 @@
 package com.prvprojects.navigationdemo.activities;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.prvprojects.navigationdemo.R;
 import com.prvprojects.navigationdemo.datatypes.NavigationData;
 
@@ -40,6 +42,19 @@ public class NavigationActivity extends BaseNavigationActivity {
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                try {
+                    // Customise the styling of the base map using a JSON object defined
+                    // in a raw resource file.
+                    boolean success = googleMap.setMapStyle(
+                            MapStyleOptions.loadRawResourceStyle(
+                                    NavigationActivity.this, R.raw.google_map_style));
+
+                    if (!success) {
+                        Log.e(TAG, "Style parsing failed.");
+                    }
+                } catch (Resources.NotFoundException e) {
+                    Log.e(TAG, "Can't find style. Error: ", e);
+                }
                 setGoogleMap(googleMap);
             }
         });
