@@ -27,7 +27,7 @@ public class DirectionsRouteLeg {
     DirectionsLatLng startLocation;
 
     @SerializedName("steps")
-    DirectionsRouteSteps routeSteps;
+    DirectionsRouteSteps routeSteps[];
 
     public DirectionsRouteLeg(){}
 
@@ -79,11 +79,11 @@ public class DirectionsRouteLeg {
         this.startLocation = startLocation;
     }
 
-    public DirectionsRouteSteps getRouteSteps() {
+    public DirectionsRouteSteps[] getRouteSteps() {
         return routeSteps;
     }
 
-    public void setRouteSteps(DirectionsRouteSteps routeSteps) {
+    public void setRouteSteps(DirectionsRouteSteps routeSteps[]) {
         this.routeSteps = routeSteps;
     }
 }

@@ -11,7 +11,7 @@ import retrofit2.http.Query;
  * Created by Pankaj on 31/08/17.
  */
 
-public class ApiInterface {
+public interface ApiInterface {
 
 
     // https://maps.googleapis.com/maps/api/directions/json?origin=1,2&destination=4,5&key=KEY_HERE
@@ -21,9 +21,7 @@ public class ApiInterface {
             @Query("origin") DirectionsLatLng source,
             @Query("destination") DirectionsLatLng destination,
             @Query("key") String apiKey
-            ) {
-        return null;
-    }
+            );
 
 
 }

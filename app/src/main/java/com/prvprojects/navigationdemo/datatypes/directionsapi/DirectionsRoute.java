@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class DirectionsRoute {
 
     @SerializedName("bounds")
-    DirectionsBounds bounds[];
+    DirectionsBounds bounds;
 
     @SerializedName("copyrights")
     String copyrights;

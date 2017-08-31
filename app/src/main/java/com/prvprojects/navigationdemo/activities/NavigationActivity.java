@@ -70,7 +70,7 @@ public class NavigationActivity extends BaseNavigationActivity {
 
         NavigationData currNavData = getmNavigationData();
         if(currNavData!=null)
-            currNavData.setDestinationPlace(sourceSelected);
+            currNavData.setSourcePlace(sourceSelected);
 
         if(currNavData.isReadyForNavigation())
             fetchRoutesFromGoogle(currNavData.getSourcePlaceAsLatLng(),
@@ -109,7 +109,7 @@ public class NavigationActivity extends BaseNavigationActivity {
 
             if(currNavData.hasUserSelected_Source())
                 etSource.setText(currNavData.getSourcePlaceAsString());
-            else
+            if(currNavData.hasUserSelected_Destination())
                 etDestination.setText(currNavData.getDestinationPlaceAsString());
 
         }

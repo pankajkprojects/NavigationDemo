@@ -2,7 +2,8 @@
     <string name="app_name">Navigation Demo</string>
     <string name="title_activity_dummy">DummyActivity</string>
 
-    <string name="key_google_maps">AIzaSyBBQqC28-W7qfFcXbTZOIapIQ96HinDiwU</string>
+    <!--<string name="key_google_maps">AIzaSyBBQqC28-W7qfFcXbTZOIapIQ96HinDiwU</string>-->
+    <string name="key_google_maps">AIzaSyAHlFgmZjTI1nNINGRCNWhDWztFX3GXAPY</string>
 
     <string name="error_log_logtag_not_set">Please set log tag.</string>
     <string name="error_log_googlemap_null">Google Map object is null.</string>
