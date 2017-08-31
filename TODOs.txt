@@ -2,7 +2,10 @@ TODOs File
 
 At a given time, this file contains the current work, proposed future work and past work done
 
-ONGOING - Complete Navigation Activity user input view
+ONGOING: Fetch directions from Google Directions API.
+
+NOTE: Review and re do UI related things after a stable release.
+
 
 DONE:
 1. Add logo for App - Added a dummy activity to install app and check app launcher icon
@@ -10,6 +13,7 @@ DONE:
 3. Add Splash Screen
 4. Demo Google Map Activity created
 5. NavigationActivity is using BaseNaviationActivity - Working
+6. Complete Navigation Activity user input view
 
 
 TODOs:

@@ -250,6 +250,9 @@ public abstract class BaseNavigationActivity extends AppCompatActivity {
      */
     protected void fetchRoutesFromGoogle(LatLng source, LatLng destination){
 
+        Log.d(TAG, "User has selected Source and Destination Locations. " +
+                "Please fetch routes from Google APO");
+
     }
 
 }

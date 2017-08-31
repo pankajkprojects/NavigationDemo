@@ -69,13 +69,12 @@ public class NavigationActivity extends BaseNavigationActivity {
             Log.d(TAG, "Source selected is null.");
 
         NavigationData currNavData = getmNavigationData();
-        if(currNavData!=null) {
+        if(currNavData!=null)
             currNavData.setDestinationPlace(sourceSelected);
-        }
 
-        if(currNavData.isReadyForNavigation()) {
-
-        }
+        if(currNavData.isReadyForNavigation())
+            fetchRoutesFromGoogle(currNavData.getSourcePlaceAsLatLng(),
+                    currNavData.getDestinationPlaceAsLatLng());
 
     }
 
@@ -83,15 +82,18 @@ public class NavigationActivity extends BaseNavigationActivity {
     @Override
     void handleLocationSelectedByUser_Destination(Place destinationSelected) {
 
-        NavigationData currNavData = getmNavigationData();
-        if(currNavData!=null) {
-            currNavData.setDestinationPlace(destinationSelected);
-        }
-
         if(destinationSelected!=null)
             Log.d(TAG, "Destination selected: "+destinationSelected.getName());
         else
             Log.d(TAG, "Destination selected is null.");
+
+        NavigationData currNavData = getmNavigationData();
+        if(currNavData!=null)
+            currNavData.setDestinationPlace(destinationSelected);
+
+        if(currNavData.isReadyForNavigation())
+            fetchRoutesFromGoogle(currNavData.getSourcePlaceAsLatLng(),
+                    currNavData.getDestinationPlaceAsLatLng());
 
     }
 
